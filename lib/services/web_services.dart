@@ -48,7 +48,7 @@ class WebServices {
         'user': jsonResponse['user'],
       };
     } catch (e, stacktrace) {
-      debugPrint(stacktrace.toString());
+      debugPrint(coloredText(Red, stacktrace.toString()));
       return _traceError(e.toString());
     }
   }
@@ -103,7 +103,7 @@ class WebServices {
       }
 
       var jsonResponse = jsonDecode(response.body);
-      if (!jsonResponse['status']) {
+      if (jsonResponse['status'] != 'success') {
         return _traceError(jsonResponse['message']);
       }
 

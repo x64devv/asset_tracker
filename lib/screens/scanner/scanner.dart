@@ -290,7 +290,7 @@ class _ScannerState extends State<Scanner> {
                           ),
                         );
                       } else {
-                        qrController!.resumeCamera();
+                        // qrController!.resumeCamera();
                         Get.showSnackbar(
                           GetSnackBar(
                             duration: const Duration(seconds: 3),

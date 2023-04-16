@@ -103,8 +103,16 @@ class UserTile extends StatefulWidget {
 }
 
 class _UserTileState extends State<UserTile> {
-  var items = ["Printer", "Laptop", "Desktop", "VoIp-Phone", "Tablet"];
+  var items = [
+    "Printer",
+    "Projector",
+    "Laptop",
+    "Desktop",
+    "VoIp-Phone",
+    "Tablet"
+  ];
   var item = "Add";
+  List<Asset> loadedAssets = [];
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -149,7 +157,7 @@ class _UserTileState extends State<UserTile> {
                                                 ...Asset.filterByOccupancy(
                                                         Asset.filterType(
                                                             value.toLowerCase(),
-                                                            widget.assets),
+                                                            loadedAssets),
                                                         '0')
                                                     .map((asset) => Column(
                                                           children: [
@@ -193,22 +201,50 @@ class _UserTileState extends State<UserTile> {
                       content: SizedBox(
                         width: widget.defaultSize * double.infinity,
                         child: SingleChildScrollView(
-                          child: Column(
-                            children: [
-                              ...Asset.filterByUser(
-                                      widget.user.id, widget.assets)
-                                  .map((asset) => Column(
-                                        children: [
-                                          UserAsset(
-                                            defaultSize: widget.defaultSize,
-                                            asset: asset,
-                                          ),
-                                          Divider(
-                                            color: textColor.withOpacity(0.1),
-                                          ),
-                                        ],
-                                      ))
-                            ],
+                          child: FutureBuilder(
+                            future: WebServices().fetchAllAssets(),
+                            builder: (context, snapshot) {
+                              if (snapshot.hasData) {
+                                if (!snapshot.data!['status']) {
+                                  return ReloadPage(
+                                    erroMsg: snapshot.data!['message'],
+                                    onTap: () {
+                                      setState(() {});
+                                    },
+                                  );
+                                }
+                                loadedAssets = snapshot.data!['assets'];
+                                return Column(
+                                  children: [
+                                    ...Asset.filterByUser(widget.user.id,
+                                            snapshot.data!['assets'])
+                                        .map((asset) => Column(
+                                              children: [
+                                                UserAsset(
+                                                  defaultSize:
+                                                      widget.defaultSize,
+                                                  asset: asset,
+                                                ),
+                                                Divider(
+                                                  color: textColor
+                                                      .withOpacity(0.1),
+                                                ),
+                                              ],
+                                            ))
+                                  ],
+                                );
+                              } else if (snapshot.hasError) {
+                                return ReloadPage(
+                                  erroMsg: snapshot.error.toString(),
+                                  onTap: () {
+                                    setState(() {});
+                                  },
+                                );
+                              }
+                              return const Center(
+                                child: CircularProgressIndicator(),
+                              );
+                            },
                           ),
                         ),
                       ),

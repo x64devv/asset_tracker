@@ -40,6 +40,7 @@ class _AssetsSatsState extends State<AssetsSats> {
                 },
               );
             }
+            List<Asset> assets = snapshot.data!['assets'];
             return SafeArea(
               child: Padding(
                 padding: EdgeInsets.all(defaultSize * 2),
@@ -103,7 +104,10 @@ class _AssetsSatsState extends State<AssetsSats> {
                                     ),
                                   ),
                                   Text(
-                                    Asset.filterType("laptop", snapshot.data!['assets']).length.toString(),
+                                    Asset.filterType(
+                                            "laptop", assets)
+                                        .length
+                                        .toString(),
                                     style: TextStyle(
                                         color: Colors.white,
                                         fontSize: defaultSize * 5,
@@ -175,8 +179,7 @@ class _AssetsSatsState extends State<AssetsSats> {
                                     ),
                                   ),
                                   Text(
-                                   Asset.filterType(
-                                            "desktop", snapshot.data!['assets'])
+                                    Asset.filterType("desktop", assets)
                                         .length
                                         .toString(),
                                     style: TextStyle(
@@ -250,7 +253,9 @@ class _AssetsSatsState extends State<AssetsSats> {
                                     ),
                                   ),
                                   Text(
-                                    '${Asset.filterType('printer', []).length}',
+                                    Asset.filterType("printer", assets)
+                                        .length
+                                        .toString(),
                                     style: TextStyle(
                                         color: Colors.white,
                                         fontSize: defaultSize * 5,
@@ -322,7 +327,9 @@ class _AssetsSatsState extends State<AssetsSats> {
                                     ),
                                   ),
                                   Text(
-                                    '${Asset.filterType('scanner', []).length}',
+                                    Asset.filterType("scanner", assets)
+                                        .length
+                                        .toString(),
                                     style: TextStyle(
                                         color: Colors.white,
                                         fontSize: defaultSize * 5,
@@ -394,7 +401,9 @@ class _AssetsSatsState extends State<AssetsSats> {
                                     ),
                                   ),
                                   Text(
-                                    '${Asset.filterType('projector', []).length}',
+                                    Asset.filterType("projector", assets)
+                                        .length
+                                        .toString(),
                                     style: TextStyle(
                                         color: Colors.white,
                                         fontSize: defaultSize * 5,
@@ -466,7 +475,9 @@ class _AssetsSatsState extends State<AssetsSats> {
                                     ),
                                   ),
                                   Text(
-                                    '${Asset.filterType('voip-phone', []).length}',
+                                    Asset.filterType("voip-phone", assets)
+                                        .length
+                                        .toString(),
                                     style: TextStyle(
                                         color: Colors.white,
                                         fontSize: defaultSize * 5,
@@ -538,7 +549,9 @@ class _AssetsSatsState extends State<AssetsSats> {
                                     ),
                                   ),
                                   Text(
-                                    '${Asset.filterType('tablet', []).length}',
+                                    Asset.filterType("tablet", assets)
+                                        .length
+                                        .toString(),
                                     style: TextStyle(
                                         color: Colors.white,
                                         fontSize: defaultSize * 5,
