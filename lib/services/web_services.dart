@@ -165,7 +165,7 @@ class WebServices {
       }
 
       var jsonResponse = jsonDecode(response.body);
-      if (!jsonResponse['status']) {
+      if (jsonResponse['status'] != 'success') {
         return _traceError(jsonResponse['message']);
       }
 
@@ -198,7 +198,7 @@ class WebServices {
       }
 
       var jsonResponse = jsonDecode(response.body);
-      if (!jsonResponse['status']) {
+      if (jsonResponse['status'] != 'success') {
         return _traceError(jsonResponse['message']);
       }
 
