@@ -3,7 +3,7 @@ class Asset {
   final String name;
   final String serialNumber;
   final String type;
-  final String productCondition;
+  String productCondition;
   final String inUse;
   final String user;
   final String location;
@@ -54,10 +54,11 @@ class Asset {
 
   Map<String, dynamic> toMap() {
     return {
+      'asset_id': id,
       'name': name,
       'serialNumber': serialNumber,
       'type': type,
-      'productCondition': productCondition,
+      'product_condition': productCondition,
       'inUse': inUse,
       'user': user,
       'location': location,

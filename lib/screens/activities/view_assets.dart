@@ -1,5 +1,8 @@
 import 'package:asset_tracker/services/web_services.dart';
 import 'package:asset_tracker/ui/utilities/size_config.dart';
+import 'package:asset_tracker/ui/widgets/custom_form_text_field.dart';
+import 'package:asset_tracker/ui/widgets/pry_btn.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
@@ -19,6 +22,7 @@ class _ViewAssetsState extends State<ViewAssets> {
   TextEditingController searchController = TextEditingController();
   List<Asset> assets = [];
   late AssetDataSource _assetDataSource;
+  DataGridController controller = DataGridController();
 
   @override
   Widget build(BuildContext context) {
@@ -56,15 +60,97 @@ class _ViewAssetsState extends State<ViewAssets> {
               assets = snapshot.data!['assets'];
               _assetDataSource = AssetDataSource(assets: assets);
               return Container(
-                padding: const EdgeInsets.only(top: 8, left: 2, right: 2)   ,
+                padding: const EdgeInsets.only(top: 8, left: 2, right: 2),
                 child: Center(
                   child: SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: SfDataGrid(
-                      defaultColumnWidth: 100,
+                      allowSorting: true,
+                      allowFiltering: true,
+                      isScrollbarAlwaysShown: true,
+                      defaultColumnWidth: 150,
+                      onCellTap: (details) {
+                        TextEditingController conditionController =
+                            TextEditingController();
+
+                        if (details.column.columnName == "productCondition") {
+                          debugPrint(
+                              '\x1B[50m=======${details.column.columnName}=======\x1B[0m');
+                          showDialog(
+                              context: context,
+                              builder: (context) {
+                                return AlertDialog(
+                                  title: Text("Asset Condition"),
+                                  content: SizedBox(
+                                    height: 200,
+                                    child: Column(
+                                      children: [
+                                        CustomFormTextWidget(
+                                          hint: "Condition",
+                                          obscureText: false,
+                                          keyboardType: TextInputType.text,
+                                          controller: conditionController,
+                                        ),
+                                        const SizedBox(
+                                          height: 8,
+                                        ),
+                                        PrimaryButton(
+                                            label: 'Save',
+                                            onPressed: () {
+                                              Asset mAsset = assets[details
+                                                      .rowColumnIndex.rowIndex -
+                                                  1];
+                                              mAsset.productCondition =
+                                                  conditionController.text;
+                                              Get.showOverlay(
+                                                asyncFunction: () async =>
+                                                    WebServices()
+                                                        .updateAsset(
+                                                            mAsset.toMap())
+                                                        .then((result) {
+                                                  Get.showSnackbar(
+                                                    GetSnackBar(
+                                                      duration: const Duration(
+                                                          seconds: 3),
+                                                      title: result['status']
+                                                          ? "Success"
+                                                          : "Error",
+                                                      message: result['status']
+                                                          ? "Asset updated successfully"
+                                                          : "Could not update asset",
+                                                      backgroundColor:
+                                                          result['status']
+                                                              ? Colors.green
+                                                              : Colors.red,
+                                                    ),
+                                                  );
+
+                                                  if (result['status']) {
+                                                    Navigator.pop(context);
+                                                    setState(() {});
+                                                  }
+                                                }),
+                                                loadingWidget: const SizedBox(
+                                                  child: Center(
+                                                    child:
+                                                        CircularProgressIndicator(),
+                                                  ),
+                                                ),
+                                              );
+                                            },
+                                            icon: Icons.arrow_forward)
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              });
+                        }
+                      },
                       source: _assetDataSource,
                       columns: [
                         GridColumn(
+                          allowSorting: true,
+                          allowFiltering: true,
                           columnName: "name",
                           label: Container(
                             padding: const EdgeInsets.all(8),
@@ -72,6 +158,8 @@ class _ViewAssetsState extends State<ViewAssets> {
                           ),
                         ),
                         GridColumn(
+                          allowSorting: true,
+                          allowFiltering: true,
                           columnName: "serialNumber",
                           label: Container(
                             padding: const EdgeInsets.all(8),
@@ -86,6 +174,7 @@ class _ViewAssetsState extends State<ViewAssets> {
                           ),
                         ),
                         GridColumn(
+                          allowEditing: true,
                           columnName: "productCondition",
                           label: Container(
                             padding: const EdgeInsets.all(8),
@@ -108,6 +197,7 @@ class _ViewAssetsState extends State<ViewAssets> {
                         ),
                         GridColumn(
                           columnName: "office",
+                          allowSorting: true,
                           label: Container(
                             padding: const EdgeInsets.all(8),
                             child: const Text("Office"),
@@ -186,11 +276,11 @@ class AssetDataSource extends DataGridSource {
   }
 
   Alignment alignment(DataGridCell cell) {
-    if (cell.columnName == "inUse" ||
-        cell.columnName == "office" ||
-        cell.columnName == "phone") {
-      return Alignment.center;
-    }
+    // if (
+    //     cell.columnName == "office" ||
+    //     cell.columnName == "phone") {
+    //   return Alignment.center;
+    // }
     return Alignment.centerLeft;
   }
 }

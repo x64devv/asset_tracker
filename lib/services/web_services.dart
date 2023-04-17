@@ -117,6 +117,35 @@ class WebServices {
     }
   }
 
+// this is a method for updating an Asset to the user
+  Future<Map<String, dynamic>> updateAsset(Map<String, dynamic> assetData) async {
+    assetData.addAll({'update_asset': '1'});
+    try {
+      var response = await client.post(
+        _url,
+        body: assetData,
+      );
+
+      if (response.statusCode != 200) {
+        return _traceError(
+            "Something happened, returned ${response.statusCode}");
+      }
+
+      var jsonResponse = jsonDecode(response.body);
+      if (jsonResponse['status'] != 'success') {
+        return _traceError(jsonResponse['message']);
+      }
+
+      return {
+        'status': true,
+        'message': 'Success',
+      };
+    } catch (e, stacktrace) {
+      debugPrint(coloredText(Red, stacktrace.toString()));
+      return _traceError(e.toString());
+    }
+  }
+
 //this is a method for getting all asset users
   Future<Map<String, dynamic>> getUsers() async {
     try {

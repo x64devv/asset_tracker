@@ -1,6 +1,8 @@
 import 'package:asset_tracker/screens/activities/check_in_out.dart';
 import 'package:asset_tracker/screens/activities/stats.dart';
 import 'package:asset_tracker/services/web_services.dart';
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart'as pdf;
 import 'package:asset_tracker/ui/constants/theme_data.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -747,5 +749,9 @@ class _DashboardState extends State<Dashboard> {
         //       }),
       ),
     );
+  }
+
+  printAssets(){
+
   }
 }
