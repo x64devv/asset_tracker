@@ -1,3 +1,4 @@
+import 'package:asset_tracker/services/web_services.dart';
 import 'package:asset_tracker/ui/utilities/size_config.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -5,6 +6,7 @@ import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
 import '../../models/asset.dart';
 import '../../ui/constants/theme_data.dart';
+import '../../ui/widgets/reload_page.dart';
 
 class ViewAssets extends StatefulWidget {
   const ViewAssets({super.key});
@@ -17,11 +19,6 @@ class _ViewAssetsState extends State<ViewAssets> {
   TextEditingController searchController = TextEditingController();
   List<Asset> assets = [];
   late AssetDataSource _assetDataSource;
-  @override
-  void initState() {
-    _assetDataSource = AssetDataSource(assets: assets);
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,74 +43,100 @@ class _ViewAssetsState extends State<ViewAssets> {
           // )
         ],
       ),
-      body: Container(
-        padding: const EdgeInsets.all(8),
-        child: Center(
-          child: Expanded(
-            child: SfDataGrid(
-              source: _assetDataSource,
-              columns: [
-                GridColumn(
-                  columnName: "name",
-                  label: Container(
-                    padding: const EdgeInsets.all(8),
-                    child: const Text("Name"),
+      body: FutureBuilder(
+          future: WebServices().fetchAllAssets(),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              if (!snapshot.data!['status']) {
+                return ReloadPage(
+                  erroMsg: snapshot.data!['message'],
+                  onTap: () {},
+                );
+              }
+              assets = snapshot.data!['assets'];
+              _assetDataSource = AssetDataSource(assets: assets);
+              return Container(
+                padding: const EdgeInsets.only(top: 8, left: 2, right: 2)   ,
+                child: Center(
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: SfDataGrid(
+                      defaultColumnWidth: 100,
+                      source: _assetDataSource,
+                      columns: [
+                        GridColumn(
+                          columnName: "name",
+                          label: Container(
+                            padding: const EdgeInsets.all(8),
+                            child: const Text("Name"),
+                          ),
+                        ),
+                        GridColumn(
+                          columnName: "serialNumber",
+                          label: Container(
+                            padding: const EdgeInsets.all(8),
+                            child: const Text("SN"),
+                          ),
+                        ),
+                        GridColumn(
+                          columnName: "type",
+                          label: Container(
+                            padding: const EdgeInsets.all(8),
+                            child: const Text("Type"),
+                          ),
+                        ),
+                        GridColumn(
+                          columnName: "productCondition",
+                          label: Container(
+                            padding: const EdgeInsets.all(8),
+                            child: const Text("Condition"),
+                          ),
+                        ),
+                        GridColumn(
+                          columnName: "inUse",
+                          label: Container(
+                            padding: const EdgeInsets.all(8),
+                            child: const Text("In Use"),
+                          ),
+                        ),
+                        GridColumn(
+                          columnName: "location",
+                          label: Container(
+                            padding: const EdgeInsets.all(8),
+                            child: const Text("Location"),
+                          ),
+                        ),
+                        GridColumn(
+                          columnName: "office",
+                          label: Container(
+                            padding: const EdgeInsets.all(8),
+                            child: const Text("Office"),
+                          ),
+                        ),
+                        GridColumn(
+                          columnName: "phone",
+                          label: Container(
+                            padding: const EdgeInsets.all(8),
+                            child: const Text("Phone"),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-                GridColumn(
-                  columnName: "serialNumber",
-                  label: Container(
-                    padding: const EdgeInsets.all(8),
-                    child: const Text("SN"),
-                  ),
-                ),
-                GridColumn(
-                  columnName: "type",
-                  label: Container(
-                    padding: const EdgeInsets.all(8),
-                    child: const Text("Type"),
-                  ),
-                ),
-                GridColumn(
-                  columnName: "productCondition",
-                  label: Container(
-                    padding: const EdgeInsets.all(8),
-                    child: const Text("Condition"),
-                  ),
-                ),
-                GridColumn(
-                  columnName: "inUse",
-                  label: Container(
-                    padding: const EdgeInsets.all(8),
-                    child: const Text("In Use"),
-                  ),
-                ),
-                GridColumn(
-                  columnName: "location",
-                  label: Container(
-                    padding: const EdgeInsets.all(8),
-                    child: const Text("Location"),
-                  ),
-                ),
-                GridColumn(
-                  columnName: "office",
-                  label: Container(
-                    padding: const EdgeInsets.all(8),
-                    child: const Text("Office"),
-                  ),
-                ),
-                GridColumn(
-                  columnName: "phone",
-                  label: Container(
-                    padding: const EdgeInsets.all(8),
-                    child: const Text("Phone"),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
+              );
+            } else if (snapshot.hasError) {
+              return ReloadPage(
+                  erroMsg: snapshot.error.toString(),
+                  onTap: () {
+                    setState(() {});
+                  });
+            }
+
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }),
     );
   }
 }
@@ -158,13 +181,6 @@ class AssetDataSource extends DataGridSource {
   Widget cellWidget(DataGridCell cell) {
     if (cell.columnName == "inUse") {
       return Text(cell.value.toString() == '1' ? "True" : "False");
-    } else if (cell.columnName == "productCondition") {
-      return GestureDetector(
-        onTap: () {
-          print('1Bx[32mShit1Bx[0m');
-        },
-        child: Text(condition),
-      );
     }
     return Text(cell.value.toString());
   }
