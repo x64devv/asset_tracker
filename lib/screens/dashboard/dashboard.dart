@@ -355,11 +355,12 @@ class _DashboardState extends State<Dashboard> {
       Get.showSnackbar(GetSnackBar(duration: const Duration(seconds: 3), title: "Success", message: "File Saved successfully",),);
     } else{
       PermissionStatus requestStatus = await Permission.storage.request();
-      // if(requestStatus.isGranted){
-      //   printAssets();
-      //   return;
-      // }
-      // Get.showSnackbar(GetSnackBar(duration: const Duration(seconds: 3), title: "Failed", message: "File not saved. Please grant permisions",),);
+      if(requestStatus.isGranted){
+        printAssets();
+        return;
+      } else {
+        Get.showSnackbar(GetSnackBar(duration: const Duration(seconds: 3), title: "Failed", message: "File not saved. Please grant permisions",),);
+      }
     }
 
 
