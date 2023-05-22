@@ -86,6 +86,7 @@ class WebServices {
 
 // this is a method for adding Asset to the user
   Future<Map<String, dynamic>> addAsset(Map<String, dynamic> assetData) async {
+    debugPrint("asset data: $assetData");
     assetData.addAll({'add_asset': '1'});
     try {
       var response = await client.post(
@@ -100,7 +101,7 @@ class WebServices {
 
       var jsonResponse = jsonDecode(response.body);
       if (jsonResponse['status'] != 'success') {
-        return _traceError(jsonResponse['message']);
+        return _traceError(jsonResponse['msg']);
       }
 
       return {

@@ -278,6 +278,7 @@ class _ScannerState extends State<Scanner> {
                 onPressed: () {
                   Get.showOverlay(
                     asyncFunction: () async {
+                      debugPrint("asset : ${asset!.toMap()}");
                       Map<String, dynamic> result =
                           await WebServices().addAsset(asset!.toMap());
                       if (result['status']) {
