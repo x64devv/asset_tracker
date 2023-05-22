@@ -64,7 +64,7 @@ class Asset {
       'type': type,
       'product_condition': productCondition,
       'inUse': inUse,
-      'user': user.toString(),
+      'user': user.isEmpty ? "0" : user['id'],
       'location': location,
       'office': office,
       'phone': phone,
